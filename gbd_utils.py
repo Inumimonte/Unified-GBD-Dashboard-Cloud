@@ -3,7 +3,7 @@
 import pandas as pd
 import streamlit as st
 
-DATA_PATH = "data/Unified_GBD_Fact_Table_CLEAN.csv"
+DATA_PATH = "data/Unified_GBD_Fact_Table_CLEAN.paraquet"
 
 # Cause colors for charts
 CAUSE_COLORS = {
@@ -13,10 +13,19 @@ CAUSE_COLORS = {
 }
 
 
+from pathlib import Path
+
+
+DATA_DIR = Path("data")
+PARQUET_PATH = DATA_DIR / "Unified_GBD_Fact_Table_CLEAN.parquet"
+
 @st.cache_data
 def load_data():
-    df = pd.read_csv(DATA_PATH)
-    df["year"] = df["year"].astype(int)
+    if PARQUET_PATH.exists():
+        df = pd.read_parquet(PARQUET_PATH)
+    else:
+        st.error(f"Data file not found: {PARQUET_PATH}")
+        st.stop()
     return df
 
 
@@ -62,3 +71,4 @@ def compute_dominant_cause(df_filtered):
     dominant_share = dominant_val / total_val if total_val > 0 else 0
 
     return dominant_cause, dominant_val, dominant_share
+
