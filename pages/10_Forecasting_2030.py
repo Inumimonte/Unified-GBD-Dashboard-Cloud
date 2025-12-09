@@ -119,7 +119,7 @@ def load_data():
 
     # keep the rest of your processing code below exactly as it was
     # (filtering by year, disease, forecasting prep, etc.)
-)
+
 
     df_raw = df_raw.rename(
         columns={
@@ -346,4 +346,5 @@ summary += (
 )
 
 st.write(summary)
+
 
