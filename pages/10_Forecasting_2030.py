@@ -104,10 +104,22 @@ def map_cause_to_category(cause: str) -> str:
 # ------------------------------------------------------------
 # DATA LOADER – same logic as app.py
 # ------------------------------------------------------------
+from pathlib import Path  # make sure this import is at the top of the file
+
 @st.cache_data
 def load_data():
-    data_path = Path("data") / "Unified_GBD_Fact_Table_CLEAN.csv"
-    df_raw = pd.read_csv(data_path)
+    data_dir = Path("data")
+    parquet_path = data_dir / "Unified_GBD_Fact_Table_CLEAN.parquet"
+
+    if parquet_path.exists():
+        df_raw = pd.read_parquet(parquet_path)
+    else:
+        st.error(f"Data file not found: {parquet_path}")
+        st.stop()
+
+    # keep the rest of your processing code below exactly as it was
+    # (filtering by year, disease, forecasting prep, etc.)
+)
 
     df_raw = df_raw.rename(
         columns={
@@ -334,3 +346,4 @@ summary += (
 )
 
 st.write(summary)
+
