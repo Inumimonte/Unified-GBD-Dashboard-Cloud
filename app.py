@@ -99,10 +99,23 @@ def map_cause_to_category(cause: str) -> str:
 # ------------------------------------------------------------
 # DATA LOADER – using your columns and mapping to categories
 # ------------------------------------------------------------
+from pathlib import Path
+
 @st.cache_data
 def load_data():
-    data_path = Path("data") / "Unified_GBD_Fact_Table_CLEAN.parquet"
-    df_raw = pd.read_csv(data_path)
+    data_dir = Path("data")
+    parquet_path = data_dir / "Unified_GBD_Fact_Table_CLEAN.parquet"
+
+    if parquet_path.exists():
+        # Load the main fact table from parquet (much smaller & faster)
+        df_raw = pd.read_parquet(parquet_path)
+    else:
+        st.error(f"Data file not found: {parquet_path}")
+        st.stop()
+
+    # 👉 keep everything else in this function the same
+    # (all your filtering, renaming, etc. stays as it was)
+
 
     # Rename to internal standard names
     df_raw = df_raw.rename(
@@ -545,4 +558,5 @@ if not filtered.empty:
     )
 else:
     st.info("Adjust filters to enable data download.")
+
 
