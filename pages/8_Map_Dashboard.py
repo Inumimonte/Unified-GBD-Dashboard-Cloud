@@ -148,10 +148,23 @@ STATE_COORDS = {
 # ------------------------------------------------------------
 # DATA LOADER – same logic as app.py
 # ------------------------------------------------------------
+from pathlib import Path  # make sure this is at the top of the file with the other imports
+
 @st.cache_data
 def load_data():
-    data_path = Path("data") / "Unified_GBD_Fact_Table_CLEAN.csv"
-    df_raw = pd.read_csv(data_path)
+    data_dir = Path("data")
+    parquet_path = data_dir / "Unified_GBD_Fact_Table_CLEAN.parquet"
+
+    if parquet_path.exists():
+        df_raw = pd.read_parquet(parquet_path)
+    else:
+        st.error(f"Data file not found: {parquet_path}")
+        st.stop()
+
+    # ⬇️ keep ALL your existing processing code below this line
+    # (filters, renaming, map prep, etc.) exactly as it was
+    # just make sure it uses df_raw as before
+
 
     df_raw = df_raw.rename(
         columns={
@@ -385,3 +398,4 @@ text = (
 )
 
 st.write(text)
+
